@@ -1,8 +1,8 @@
-from typing import Sequence, Type
+from typing import Sequence
 from uuid import UUID
 
 from advanced_alchemy.extensions.litestar import SQLAlchemyDTO
-from litestar import Controller, get, post, patch, status_codes
+from litestar import Controller, get, patch, post, status_codes
 from litestar.di import Provide
 from litestar.exceptions import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,11 +15,13 @@ from src.schemas import CreateTaskDTO, PartialDTO
 
 
 class TasksController(Controller):
-    path = "/tasks"
+    path = '/tasks'
     dependencies = {'user_id': Provide(get_user_id)}
 
     @get('/', return_dto=SQLAlchemyDTO[Task])
-    async def list_tasks(self, user_id: int, db_session: AsyncSession, show_completed: bool = True) -> Sequence[Task]:
+    async def list_tasks(
+        self, user_id: int, db_session: AsyncSession, show_completed: bool = True,
+    ) -> Sequence[Task]:
         filters = {'user_id': user_id}
         if not show_completed:
             filters['is_completed'] = False
